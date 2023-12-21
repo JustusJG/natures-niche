@@ -39,10 +39,7 @@ public class NaturesNicheConfig {
             updateBiome(biomeIdentifier);
         });
     }
-
-    private final String configOrder = "cropFirst"; // Default is "cropFirst". Possible["cropFirst", "biomeFirst"]
     private final Map<String, IConfig> crops = new HashMap<>();
-
     private final Map<String, IConfig> biomes = new HashMap<>();
 
     private static class CropConfig implements IConfig {
@@ -106,6 +103,8 @@ public class NaturesNicheConfig {
             return cropModifier;
         }
     }
+
+    private final String configOrder = "cropFirst"; // Default is "cropFirst". Possible["cropFirst", "biomeFirst"]
 
     public float getModifier(String cropIdentifier, String biomeIdentifier) {
         return getModifierBasedOnOrder(cropIdentifier, biomeIdentifier, "cropFirst".equals(configOrder));
