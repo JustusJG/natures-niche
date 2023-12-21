@@ -1,9 +1,9 @@
-# Nature Niche
+# Natures Niche
 
-**Welcome to the "Nature Niche" Repository – a Minecraft Fabric mod that enriches the game world with realistic plant growth behavior.**
+**Welcome to the "Natures Niche" Repository – a Minecraft Fabric mod that enriches the game world with realistic plant growth behavior.**
 
-## About Nature Niche
-"Nature Niche" adds a new layer of realism to Minecraft by tailoring the growth conditions of plants to the biomes they are in. This mod aims to enhance the gaming experience by offering a more realistic representation of nature. From cacti that don't grow in snowy regions to wheat that won't thrive in deserts, each plant in "Nature Niche" has its specific requirements for growth and survival.
+## About Natures Niche
+"Natures Niche" adds a new layer of realism to Minecraft by tailoring the growth conditions of plants to the biomes they are in. This mod aims to enhance the gaming experience by offering a more realistic representation of nature. From cacti that don't grow in snowy regions to wheat that won't thrive in deserts, each plant in "Natures Niche" has its specific requirements for growth and survival.
 
 ## Key Features
 - **Biome-Specific Plant Growth**: Plants only grow in their natural biomes.
@@ -18,4 +18,4 @@ This mod is licensed under the [Creative Commons Attribution 4.0 International L
 
 ---
 
-## Thank you for visiting and enjoy "Nature Niche"!
+## Thank you for visiting and enjoy "Natures Niche"!
