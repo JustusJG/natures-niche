@@ -2,55 +2,41 @@ package software.gunter.naturesniche;
 
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import software.gunter.naturesniche.interfaces.IConfig;
 import software.gunter.naturesniche.utils.RegistryUtil;
 
 import java.util.*;
 
 public class NaturesNicheConfig {
+    public void updateCrop(String identifier) {
+        NaturesNicheMod.LOGGER.info("Updating crop " + identifier + "...");
+        CropConfig cropConfig = crops.getOrDefault(identifier, new CropConfig());
+        cropConfig.update();
+        crops.put(identifier, cropConfig);
+        NaturesNicheMod.LOGGER.info("Crop " + identifier + " updated.");
+    }
+
     public void updateCrops() {
         RegistryUtil.getCrops().forEach(crop -> {
             String cropIdentifier = crop.toString()
                     .replace("Block{", "")
                     .replace("}", "");
-
-            NaturesNicheMod.LOGGER.info("Updating crop " + cropIdentifier + "...");
-            Map<String, Float> map = new HashMap<>();
-
-            if (crops.containsKey(cropIdentifier)) {
-                NaturesNicheMod.LOGGER.info(cropIdentifier + " is existing. Load cropConfig.");
-                map = crops.get(cropIdentifier).getModifierMap();
-                ;
-            }
-
-            for (Biome biome : RegistryUtil.getBiomes()) {
-                map.putIfAbsent(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f);
-            }
-            crops.put(cropIdentifier, new CropConfig(map));
-            NaturesNicheMod.LOGGER.info("Crop " + cropIdentifier + " updated.");
+            updateCrop(cropIdentifier);
         });
     }
 
+    public void updateBiome(String identifier) {
+        NaturesNicheMod.LOGGER.info("Updating biome " + identifier + "...");
+        BiomeConfig biomeConfig = biomes.getOrDefault(identifier, new BiomeConfig());
+        biomeConfig.update();
+        biomes.put(identifier, biomeConfig);
+        NaturesNicheMod.LOGGER.info("Biome " + identifier + " updated.");
+    }
 
     public void updateBiomes() {
         RegistryUtil.getBiomes().forEach(biome -> {
             String biomeIdentifier = String.valueOf(BuiltinRegistries.BIOME.getId(biome));
-
-            NaturesNicheMod.LOGGER.info("Updating biome " + biomeIdentifier + "...");
-            Map<String, Float> map;
-
-            if (biomes.containsKey(biomeIdentifier)) {
-                NaturesNicheMod.LOGGER.info(biomeIdentifier + " is existing. Load biomeConfig.");
-                map = biomes.get(biomeIdentifier).getModifierMap();
-            } else {
-                map = new HashMap<>();
-            }
-
-            RegistryUtil.getCrops().forEach(crop -> map.putIfAbsent(String.valueOf(Registry.BLOCK.getId(crop)), 1.0f));
-
-            biomes.put(biomeIdentifier, new BiomeConfig(map));
-            NaturesNicheMod.LOGGER.info("Biome " + biomeIdentifier + " updated.");
+            updateBiome(biomeIdentifier);
         });
     }
 
@@ -69,6 +55,16 @@ public class NaturesNicheConfig {
 
         public CropConfig(Map<String, Float> biomeModifier) {
             this.biomeModifier = biomeModifier;
+        }
+
+        public CropConfig() {
+            this(new HashMap<>());
+            update();
+        }
+
+        @Override
+        public void update() {
+            RegistryUtil.getBiomes().forEach(biome -> biomeModifier.putIfAbsent(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f));
         }
 
         @Override
@@ -90,6 +86,16 @@ public class NaturesNicheConfig {
 
         public BiomeConfig(Map<String, Float> cropModifier) {
             this.cropModifier = cropModifier;
+        }
+
+        public BiomeConfig() {
+            this(new HashMap<>());
+            update();
+        }
+
+        @Override
+        public void update() {
+            RegistryUtil.getCrops().forEach(crop -> cropModifier.putIfAbsent(String.valueOf(Registry.BLOCK.getId(crop)), 1.0f));
         }
 
         @Override
