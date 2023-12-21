@@ -57,11 +57,11 @@ public abstract class CropBlockMixin extends Block implements Fertilizable {
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
             String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
-            float multiplier = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
-            if (multiplier <= 0) {
+            float multiplierValue = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
+            if (multiplierValue <= 0) {
                 ci.cancel();
             }
-            multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplier, 2.5, -2.5, -0.511);
+            float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, -0.511);
 
             if (world.getBaseLightLevel(pos, 0) >= 9) {
                 int i = state.get(AGE);
