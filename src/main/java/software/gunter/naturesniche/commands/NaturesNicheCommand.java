@@ -14,6 +14,13 @@ public class NaturesNicheCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("naturesniche").requires((source) -> source.hasPermissionLevel(2))
                 .then(CommandManager.literal("config")
+                        .then(CommandManager.literal("save")
+                                .executes(context -> {
+                                    NaturesNicheMod.CONFIG_MANAGER.saveConfig();
+                                    context.getSource().sendFeedback(new LiteralText("Konfiguration gespeichert."), true);
+                                    return 1;
+                                })
+                        )
                         .then(CommandManager.literal("reload")
                                 .executes(context -> {
                                     NaturesNicheMod.loadConfig();
@@ -31,7 +38,6 @@ public class NaturesNicheCommand {
                                                 })
                                         ))
                         )
-
                         .then(CommandManager.literal("biome")
                                 .then(CommandManager.literal("init")
                                         .executes(context -> updateConfig(context, "biome", null))
