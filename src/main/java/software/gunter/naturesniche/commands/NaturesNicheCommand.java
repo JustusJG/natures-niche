@@ -21,22 +21,26 @@ public class NaturesNicheCommand {
                                     return 1;
                                 })
                         )
-                        .then(CommandManager.literal("crop").executes(context -> updateConfig(context, "crop", null))
-                                .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
-                                        .executes(context -> {
-                                            String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
-                                            return updateConfig(context, "crop", identifier);
-                                        })
-                                )
+                        .then(CommandManager.literal("crop")
+                                .then(CommandManager.literal("init")
+                                        .executes(context -> updateConfig(context, "crop", null))
+                                        .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
+                                                .executes(context -> {
+                                                    String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
+                                                    return updateConfig(context, "crop", identifier);
+                                                })
+                                        ))
                         )
 
-                        .then(CommandManager.literal("biome").executes(context -> updateConfig(context, "biome", null))
-                                .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
-                                        .executes(context -> {
-                                            String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
-                                            return updateConfig(context, "biome", identifier);
-                                        })
-                                )
+                        .then(CommandManager.literal("biome")
+                                .then(CommandManager.literal("init")
+                                        .executes(context -> updateConfig(context, "biome", null))
+                                        .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
+                                                .executes(context -> {
+                                                    String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
+                                                    return updateConfig(context, "biome", identifier);
+                                                })
+                                        ))
                         )
                 )
         );
