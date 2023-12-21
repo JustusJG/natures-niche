@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import software.gunter.naturesniche.interfaces.IConfig;
 import software.gunter.naturesniche.utils.RegistryUtil;
 
 import java.util.*;
@@ -76,24 +75,22 @@ public class NaturesNicheConfig {
         return configOrder;
     }
 
-    private static class ModifierConfig implements IConfig {
+    private static class ModifierConfig {
+        private final Float defaultModifier = -1.0f;
         private final Map<String, Float> modifiers = new HashMap<>();
 
         public void updateModifiers(Collection<?> elements, Function<Object, String> identifierFunction) {
             elements.forEach(element -> modifiers.putIfAbsent(identifierFunction.apply(element), 1.0f));
         }
 
-        @Override
-        public void update() {
-
+        public Float getDefaultModifier() {
+            return defaultModifier;
         }
 
-        @Override
         public float getModifier(String identifier) {
             return modifiers.getOrDefault(identifier, 1.0f);
         }
 
-        @Override
         public Map<String, Float> getModifierMap() {
             return modifiers;
         }
