@@ -1,18 +1,28 @@
 package software.gunter.naturesniche;
 
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NaturesNicheConfig {
-    private final List<CropConfig> cropConfigs = new ArrayList<>();
+    private final Map<Identifier, CropConfig> cropConfigs = new HashMap<>();
 
-    private record CropConfig(Identifier cropIdentifier, Map<Identifier, Float> biomeModifier) {
+    private record CropConfig(Map<Identifier, Float> biomeModifier) {
 
-        public Float getModifier(Identifier biomeIdentifier) {
-            return this.biomeModifier.get(biomeIdentifier);
+        public float getModifier(Identifier biomeIdentifier) {
+            if (this.biomeModifier.containsKey(biomeIdentifier)) {
+                return this.biomeModifier.get(biomeIdentifier);
+            }
+            return 1.0f;
         }
+    }
+
+    public float getModifier(Identifier cropIdentifier, Identifier biomeIdentifier) {
+        if (cropConfigs.containsKey(cropIdentifier)) {
+            return cropConfigs.get(cropIdentifier).getModifier(biomeIdentifier);
+        }
+        return 1.0f;
     }
 }
