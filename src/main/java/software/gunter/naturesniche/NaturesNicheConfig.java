@@ -18,6 +18,7 @@ public class NaturesNicheConfig {
                             .replace("Block{", "")
                             .replace("}", "");
 
+                    NaturesNicheMod.LOGGER.info("Updating crop " + cropIdentifier + "...");
                     Map<String, Float> map = new HashMap<>();
 
                     if (cropConfigs.containsKey(cropIdentifier)) {
@@ -29,6 +30,7 @@ public class NaturesNicheConfig {
                         map.putIfAbsent(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f);
                     }
                     cropConfigs.put(cropIdentifier, new CropConfig(map));
+                    NaturesNicheMod.LOGGER.info("Crop " + cropIdentifier + " updated.");
                 }
             }
         });
