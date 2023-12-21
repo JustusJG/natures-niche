@@ -88,7 +88,7 @@ public class NaturesNicheConfig {
         }
 
         public float getModifier(String identifier) {
-            return modifiers.getOrDefault(identifier, 1.0f);
+            return modifiers.getOrDefault(identifier, defaultModifier);
         }
 
         public Map<String, Float> getModifierMap() {
