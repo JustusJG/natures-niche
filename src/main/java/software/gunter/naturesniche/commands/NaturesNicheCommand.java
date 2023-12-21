@@ -16,7 +16,7 @@ public class NaturesNicheCommand {
                 .then(CommandManager.literal("config")
                         .then(CommandManager.literal("reload")
                                 .executes(context -> {
-                                    NaturesNicheMod.initConfig();
+                                    NaturesNicheMod.loadConfig();
                                     context.getSource().sendFeedback(new LiteralText("Konfiguration neugeladen."), true);
                                     return 1;
                                 })

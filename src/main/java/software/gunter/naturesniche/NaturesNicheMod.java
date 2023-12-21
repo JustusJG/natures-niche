@@ -18,10 +18,10 @@ public class NaturesNicheMod implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> NaturesNicheCommand.register(dispatcher));
-		initConfig();
+		loadConfig();
 	}
 
-	public static void initConfig() {
+	public static void loadConfig() {
 		CONFIG_MANAGER = new ConfigManager();
 		CONFIG = CONFIG_MANAGER.getConfig();
 	}
