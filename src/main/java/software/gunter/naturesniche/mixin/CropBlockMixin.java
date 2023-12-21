@@ -60,17 +60,16 @@ public abstract class CropBlockMixin extends Block implements Fertilizable {
             float multiplierValue = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
             if (multiplierValue <= 0) {
                 ci.cancel();
+                return;
             }
-            float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, -0.511);
+            float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, 0.511);
 
             if (world.getBaseLightLevel(pos, 0) >= 9) {
                 int i = state.get(AGE);
                 if (i < getMaxAge()) {
                     float f = getAvailableMoisture(this, world, pos);
-                    NaturesNicheMod.LOGGER.info("f:" + f);
                     f *= multiplier;
                     int chance = random.nextInt((int) (growthThreshold / f) + 1);
-                    NaturesNicheMod.LOGGER.info("multiplied f:" + f + ", multiplier: " + multiplier + ", chance:" + chance);
                     if (chance == 0) {
                         world.setBlockState(pos, withAge(i + 1), 2); // grow
                     }
