@@ -34,7 +34,7 @@ public class NaturesNicheConfig {
 
     public void updateBiomes() {
         RegistryUtil.getBiomes().forEach(biome -> {
-            String biomeIdentifier = biome.toString();
+            String biomeIdentifier = String.valueOf(BuiltinRegistries.BIOME.getId(biome));
 
             NaturesNicheMod.LOGGER.info("Updating biome " + biomeIdentifier + "...");
             Map<String, Float> map;
@@ -51,31 +51,11 @@ public class NaturesNicheConfig {
             biomeConfigs.put(biomeIdentifier, new BiomeConfig(map));
             NaturesNicheMod.LOGGER.info("Biome " + biomeIdentifier + " updated.");
         });
-
-        RegistryUtil.getCrops().forEach(crop -> {
-            String cropIdentifier = crop.toString()
-                    .replace("Block{", "")
-                    .replace("}", "");
-
-            NaturesNicheMod.LOGGER.info("Updating crop " + cropIdentifier + "...");
-            Map<String, Float> map = new HashMap<>();
-
-            if (cropConfigs.containsKey(cropIdentifier)) {
-                NaturesNicheMod.LOGGER.info(cropIdentifier + " is existing. Load cropConfig.");
-                map = cropConfigs.get(cropIdentifier).getBiomeModifier();
-                ;
-            }
-
-            for (Biome biome : RegistryUtil.getBiomes()) {
-                map.putIfAbsent(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f);
-            }
-            cropConfigs.put(cropIdentifier, new CropConfig(map));
-            NaturesNicheMod.LOGGER.info("Crop " + cropIdentifier + " updated.");
-        });
     }
 
     public NaturesNicheConfig() {
         updateCrops();
+        updateBiomes();
     }
 
     private final boolean priority = true; // true = crop, false = biome
