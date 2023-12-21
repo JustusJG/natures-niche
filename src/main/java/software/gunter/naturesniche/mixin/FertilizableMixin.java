@@ -33,19 +33,22 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
         if (biomeKeyOptional.isPresent() && $shouldInject) {
             String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
             float multiplier = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
-            if (multiplier < 1.0f) {
-                while (multiplier > 0f) {
-                    float rand = random.nextFloat();
-                    if (multiplier >= rand) {
-                        $shouldInject = false;
-                        this.randomTick(state, world, pos, random);
-                        multiplier -= 1f;
-                    }
-                }
-                $shouldInject = true;
+
+            if (multiplier <= 0.0f) {
                 ci.cancel();
+            } else if (multiplier < 1.0f) {
+                if (random.nextFloat() >= multiplier) {
+                    ci.cancel();
+                }
+            } else if (multiplier > 1.0f) {
+                int extraTicks = (int) ((multiplier - 1.0f) * 5);
+                for (int i = 0; i < extraTicks; i++) {
+                    $shouldInject = false;
+                    this.randomTick(state, world, pos, random);
+                }
             }
         }
+        $shouldInject = true;
     }
 
     @Inject(at = @At("HEAD"), method = "grow", cancellable = true)
@@ -55,20 +58,12 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
             String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
-            NaturesNicheMod.LOGGER.info(biomeIdentifier);
             float multiplier = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
-            NaturesNicheMod.LOGGER.info(String.valueOf(multiplier));
+
             if (multiplier < 1.0f) {
-                while (multiplier > 0f) {
-                    float rand = random.nextFloat();
-                    if (multiplier >= rand) {
-                        $shouldInject = false;
-                        this.grow(world, random, pos, state);
-                        multiplier -= 1f;
-                    }
+                if (random.nextFloat() >= multiplier) {
+                    ci.cancel();
                 }
-                $shouldInject = true;
-                ci.cancel();
             }
         }
     }
