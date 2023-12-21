@@ -13,18 +13,30 @@ public class NaturesNicheCommand {
                         .then(CommandManager.literal("reload")
                                 .executes(context -> {
                                     NaturesNicheMod.initConfig();
-                                    context.getSource().sendFeedback(new LiteralText("Konfiguration neugeladen."), false);
+                                    context.getSource().sendFeedback(new LiteralText("Konfiguration neugeladen."), true);
                                     return 1;
                                 })
                         )
-                        .then(CommandManager.literal("updatecrops")
-                                .executes(context -> {
-                                    NaturesNicheMod.CONFIG.updateCrops();
-                                    NaturesNicheMod.CONFIG_MANAGER.saveConfig();
-                                    context.getSource().sendFeedback(new LiteralText("Fehlende Crops der Konfiguration hinzugefügt."), false);
-                                    return 1;
-                                })
+                        .then(CommandManager.literal("crop")
+                                .then(CommandManager.literal("update").executes(context -> {
+                                            NaturesNicheMod.CONFIG.updateCrops();
+                                            NaturesNicheMod.CONFIG_MANAGER.saveConfig();
+                                            context.getSource().sendFeedback(new LiteralText("Fehlende Crops der Konfiguration hinzugefügt."), true);
+                                            return 1;
+                                        })
+                                )
                         )
-                ));
+
+                        .then(CommandManager.literal("biome")
+                                .then(CommandManager.literal("update").executes(context -> {
+                                            NaturesNicheMod.CONFIG.updateBiomes();
+                                            NaturesNicheMod.CONFIG_MANAGER.saveConfig();
+                                            context.getSource().sendFeedback(new LiteralText("Fehlende Biomes der Konfiguration hinzugefügt."), true);
+                                            return 1;
+                                        })
+                                )
+                        )
+                )
+        );
     }
 }
