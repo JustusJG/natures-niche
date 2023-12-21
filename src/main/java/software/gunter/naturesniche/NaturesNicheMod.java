@@ -2,11 +2,6 @@ package software.gunter.naturesniche;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.gunter.naturesniche.commands.NaturesNicheCommand;
