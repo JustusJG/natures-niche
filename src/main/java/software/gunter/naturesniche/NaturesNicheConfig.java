@@ -40,11 +40,6 @@ public class NaturesNicheConfig {
         });
     }
 
-    public NaturesNicheConfig() {
-        updateCrops();
-        updateBiomes();
-    }
-
     private final boolean priority = true; // true = crop, false = biome
     private final Map<String, CropConfig> crops = new HashMap<>();
 
