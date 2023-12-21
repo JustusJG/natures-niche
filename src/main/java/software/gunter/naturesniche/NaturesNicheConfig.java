@@ -10,7 +10,7 @@ import java.util.*;
 public class NaturesNicheConfig {
     public void updateCrop(String identifier) {
         NaturesNicheMod.LOGGER.info("Updating crop " + identifier + "...");
-        CropConfig cropConfig = crops.getOrDefault(identifier, new CropConfig());
+        CropConfig cropConfig = (CropConfig) crops.getOrDefault(identifier, new CropConfig());
         cropConfig.update();
         crops.put(identifier, cropConfig);
         NaturesNicheMod.LOGGER.info("Crop " + identifier + " updated.");
@@ -27,7 +27,7 @@ public class NaturesNicheConfig {
 
     public void updateBiome(String identifier) {
         NaturesNicheMod.LOGGER.info("Updating biome " + identifier + "...");
-        BiomeConfig biomeConfig = biomes.getOrDefault(identifier, new BiomeConfig());
+        BiomeConfig biomeConfig = (BiomeConfig) biomes.getOrDefault(identifier, new BiomeConfig());
         biomeConfig.update();
         biomes.put(identifier, biomeConfig);
         NaturesNicheMod.LOGGER.info("Biome " + identifier + " updated.");
@@ -40,10 +40,10 @@ public class NaturesNicheConfig {
         });
     }
 
-    private final boolean priority = true; // true = crop, false = biome
-    private final Map<String, CropConfig> crops = new HashMap<>();
+    private final String configOrder = "cropFirst"; // Default is "cropFirst". Possible["cropFirst", "biomeFirst"]
+    private final Map<String, IConfig> crops = new HashMap<>();
 
-    private final Map<String, BiomeConfig> biomes = new HashMap<>();
+    private final Map<String, IConfig> biomes = new HashMap<>();
 
     private static class CropConfig implements IConfig {
         private final Map<String, Float> biomeModifier;
@@ -108,37 +108,31 @@ public class NaturesNicheConfig {
     }
 
     public float getModifier(String cropIdentifier, String biomeIdentifier) {
-        if (priority) {
-            if (crops.containsKey(cropIdentifier)) {
-                CropConfig config = crops.get(cropIdentifier);
-                if (config.getModifierMap().containsKey(biomeIdentifier)) {
-                    return crops.get(cropIdentifier).getModifier(biomeIdentifier);
-                }
-            }
-            if (biomes.containsKey(biomeIdentifier)) {
-                BiomeConfig config = biomes.get(biomeIdentifier);
-                if (config.getModifierMap().containsKey(cropIdentifier)) {
-                    return crops.get(biomeIdentifier).getModifier(cropIdentifier);
-                }
-            }
-        } else {
-            if (biomes.containsKey(biomeIdentifier)) {
-                BiomeConfig config = biomes.get(biomeIdentifier);
-                if (config.getModifierMap().containsKey(cropIdentifier)) {
-                    return crops.get(biomeIdentifier).getModifier(cropIdentifier);
-                }
-            }
-            if (crops.containsKey(cropIdentifier)) {
-                CropConfig config = crops.get(cropIdentifier);
-                if (config.getModifierMap().containsKey(biomeIdentifier)) {
-                    return crops.get(cropIdentifier).getModifier(biomeIdentifier);
-                }
-            }
-        }
-        return 1.0f;
+        return getModifierBasedOnOrder(cropIdentifier, biomeIdentifier, "cropFirst".equals(configOrder));
     }
 
-    public boolean getPriority() {
-        return priority;
+    private float getModifierBasedOnOrder(String cropIdentifier, String biomeIdentifier, boolean cropFirst) {
+        float modifier = checkConfig(cropFirst ? crops : biomes, cropFirst ? cropIdentifier : biomeIdentifier, cropFirst ? biomeIdentifier : cropIdentifier);
+        if (modifier != -1.0f) {
+            return modifier;
+        }
+        return checkConfig(cropFirst ? biomes : crops, cropFirst ? biomeIdentifier : cropIdentifier, cropFirst ? cropIdentifier : biomeIdentifier);
+    }
+
+    private float checkConfig(Map<String, IConfig> configs, String primaryIdentifier, String secondaryIdentifier) {
+        IConfig config = configs.get(primaryIdentifier);
+        if (config != null) {
+            return config.getModifier(secondaryIdentifier);
+        }
+        return -1.0f; // Rückgabewert, wenn kein Modifikator gefunden wird
+    }
+
+    public void init() {
+        updateBiomes();
+        updateCrops();
+    }
+
+    public String getConfigOrder() {
+        return configOrder;
     }
 }
