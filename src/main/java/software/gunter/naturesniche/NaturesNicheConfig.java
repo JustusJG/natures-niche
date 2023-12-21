@@ -14,13 +14,20 @@ public class NaturesNicheConfig {
             if(item instanceof BlockItem) {
                 Block block = ((BlockItem) item).getBlock();
                 if(block instanceof CropBlock || block instanceof StemBlock || block instanceof CocoaBlock || block instanceof SaplingBlock) {
-                    Map<String, Float> map = new HashMap<>();
-                    for (Biome biome : BuiltinRegistries.BIOME) {
-                        map.put(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f);
-                    }
                     String cropIdentifier = ((BlockItem) item).getBlock().toString()
                             .replace("Block{", "")
                             .replace("}", "");
+
+                    Map<String, Float> map = new HashMap<>();
+
+                    if (cropConfigs.containsKey(cropIdentifier)) {
+                        NaturesNicheMod.LOGGER.info(cropIdentifier + " is existing. Load cropConfig.");
+                        map = cropConfigs.get(cropIdentifier).getBiomeModifier();;
+                    }
+
+                    for (Biome biome : BuiltinRegistries.BIOME) {
+                        map.putIfAbsent(String.valueOf(BuiltinRegistries.BIOME.getId(biome)), 1.0f);
+                    }
                     cropConfigs.put(cropIdentifier, new CropConfig(map));
                 }
             }
@@ -45,6 +52,10 @@ public class NaturesNicheConfig {
                 return this.biomeModifier.get(biomeIdentifier);
             }
             return 1.0f;
+        }
+
+        public Map<String, Float> getBiomeModifier() {
+            return biomeModifier;
         }
     }
 
