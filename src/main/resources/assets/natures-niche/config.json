@@ -1,0 +1,12 @@
+{
+  "cropConfig": [
+    {
+      "cropIdentifier": "minecraft:wheat",
+      "biomeModifier": {
+        "biomeIdentifier": 1.0,
+        "Desert": 0.5,
+        "Forest": 0.75
+      }
+    }
+  ]
+}
