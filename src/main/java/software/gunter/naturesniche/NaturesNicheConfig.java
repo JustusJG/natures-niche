@@ -9,7 +9,7 @@ import net.minecraft.world.biome.Biome;
 import java.util.*;
 
 public class NaturesNicheConfig {
-    public NaturesNicheConfig() {
+    public void updateCrops() {
         Registry.ITEM.forEach(item -> {
             if(item instanceof BlockItem) {
                 Block block = ((BlockItem) item).getBlock();
@@ -25,6 +25,10 @@ public class NaturesNicheConfig {
                 }
             }
         });
+    }
+
+    public NaturesNicheConfig() {
+        updateCrops();
     }
 
     private final Map<String, CropConfig> cropConfigs = new HashMap<>();
