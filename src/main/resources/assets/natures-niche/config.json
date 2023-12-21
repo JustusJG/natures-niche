@@ -1,9 +1,0 @@
-{
-  "cropConfigs": {
-    "cropIdentifier": {
-      "biomeModifier": {
-        "minecraft:river": 0.0
-      }
-    }
-  }
-}
