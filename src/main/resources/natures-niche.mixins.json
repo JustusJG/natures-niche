@@ -4,7 +4,8 @@
   "package": "software.gunter.naturesniche.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "FertilizableMixin"
+    "FertilizableMixin",
+    "CropBlockMixin"
   ],
   "client": [
   ],
