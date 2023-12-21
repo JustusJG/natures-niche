@@ -76,7 +76,7 @@ public class NaturesNicheConfig {
     }
 
     private static class ModifierConfig {
-        private final Float defaultModifier = -1.0f;
+        private final Float defaultModifier = 1.0f;
         private final Map<String, Float> modifiers = new HashMap<>();
 
         public void updateModifiers(Collection<?> elements, Function<Object, String> identifierFunction) {
