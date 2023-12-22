@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.gunter.naturesniche.commands.NaturesNicheCommand;
+import software.gunter.naturesniche.config.NaturesNicheConfig;
 import software.gunter.naturesniche.utils.ConfigManager;
 
 public class NaturesNicheMod implements ModInitializer {

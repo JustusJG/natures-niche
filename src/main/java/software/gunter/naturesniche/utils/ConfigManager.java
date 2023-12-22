@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
-import software.gunter.naturesniche.NaturesNicheConfig;
+import software.gunter.naturesniche.config.NaturesNicheConfig;
 import software.gunter.naturesniche.NaturesNicheMod;
 
 import java.io.*;

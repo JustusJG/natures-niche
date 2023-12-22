@@ -1,33 +1,51 @@
-package software.gunter.naturesniche;
+package software.gunter.naturesniche.config;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import software.gunter.naturesniche.NaturesNicheMod;
 import software.gunter.naturesniche.utils.RegistryUtil;
 
 import java.util.*;
 import java.util.function.Function;
 
 public class NaturesNicheConfig {
+    private final GrowthConditionsConfig defaultGrowthConditions = new GrowthConditionsConfig(0.5f, 0.5f, true);
+    private final Map<String, GrowthConditionsConfig> growthConditions = new HashMap<>();
+    private final String modifierOrder = "cropFirst"; // Default is "cropFirst". Possible["cropFirst", "biomeFirst"]
     private final Map<String, ModifierConfig> crops = new HashMap<>();
     private final Map<String, ModifierConfig> biomes = new HashMap<>();
-    private final String configOrder = "cropFirst"; // Default is "cropFirst". Possible["cropFirst", "biomeFirst"]
+
+    public void updateGrowthCondition(String identifier) {
+        NaturesNicheMod.LOGGER.debug("Updating growthConditions for " + identifier + "...");
+        growthConditions.putIfAbsent(identifier, defaultGrowthConditions);
+        NaturesNicheMod.LOGGER.debug("growthConditions for " + identifier + " updated.");
+    }
 
     public void updateCrop(String identifier) {
-        NaturesNicheMod.LOGGER.info("Updating crop " + identifier + "...");
+        NaturesNicheMod.LOGGER.debug("Updating crop " + identifier + "...");
         ModifierConfig cropConfig = crops.getOrDefault(identifier, new ModifierConfig());
         cropConfig.updateModifiers(RegistryUtil.getBiomes(), biome -> String.valueOf(BuiltinRegistries.BIOME.getId((Biome) biome)));
         crops.put(identifier, cropConfig);
-        NaturesNicheMod.LOGGER.info("Crop " + identifier + " updated.");
+        NaturesNicheMod.LOGGER.debug("Crop " + identifier + " updated.");
     }
 
     public void updateBiome(String identifier) {
-        NaturesNicheMod.LOGGER.info("Updating biome " + identifier + "...");
+        NaturesNicheMod.LOGGER.debug("Updating biome " + identifier + "...");
         ModifierConfig biomeConfig = biomes.getOrDefault(identifier, new ModifierConfig());
         biomeConfig.updateModifiers(RegistryUtil.getCrops(), crop -> String.valueOf(Registry.BLOCK.getId((Block) crop)));
         biomes.put(identifier, biomeConfig);
-        NaturesNicheMod.LOGGER.info("Biome " + identifier + " updated.");
+        NaturesNicheMod.LOGGER.debug("Biome " + identifier + " updated.");
+    }
+
+    public void updateGrowthConditions() {
+        RegistryUtil.getCrops().forEach(crop -> {
+            String cropIdentifier = crop.toString()
+                    .replace("Block{", "")
+                    .replace("}", "");
+            updateGrowthCondition(cropIdentifier);
+        });
     }
 
     public void updateCrops() {
@@ -47,7 +65,7 @@ public class NaturesNicheConfig {
     }
 
     public float getModifier(String cropIdentifier, String biomeIdentifier) {
-        return getModifierBasedOnOrder(cropIdentifier, biomeIdentifier, "cropFirst".equals(configOrder));
+        return getModifierBasedOnOrder(cropIdentifier, biomeIdentifier, "cropFirst".equals(modifierOrder));
     }
 
     private float getModifierBasedOnOrder(String cropIdentifier, String biomeIdentifier, boolean cropFirst) {
@@ -66,13 +84,16 @@ public class NaturesNicheConfig {
         return -1.0f; // Rückgabewert, wenn kein Modifikator gefunden wird
     }
 
-    public void init() {
+    public void update() {
+        NaturesNicheMod.LOGGER.info("Updating config for newly added Biomes/Crops...");
         updateBiomes();
         updateCrops();
+        updateGrowthConditions();
+        NaturesNicheMod.LOGGER.info("Config updated.");
     }
 
-    public String getConfigOrder() {
-        return configOrder;
+    public String getModifierOrder() {
+        return modifierOrder;
     }
 
     private static class ModifierConfig {

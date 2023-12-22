@@ -5,14 +5,9 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import software.gunter.naturesniche.NaturesNicheConfig;
-import software.gunter.naturesniche.NaturesNicheMod;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RegistryUtil {
     public static List<Biome> getBiomes() {
