@@ -28,6 +28,13 @@ public class NaturesNicheCommand {
                                     return 1;
                                 })
                         )
+                        .then(CommandManager.literal("update")
+                                .executes(context -> {
+                                    NaturesNicheMod.CONFIG.update();
+                                    context.getSource().sendFeedback(new LiteralText("Konfiguration aktualisiert."), true);
+                                    return 1;
+                                })
+                        )
                         .then(CommandManager.literal("crop")
                                 .then(CommandManager.literal("init")
                                         .executes(context -> updateConfig(context, "crop", null))
