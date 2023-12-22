@@ -28,7 +28,7 @@ public class GrowthConditionsConfig {
         float precipitationModifier = precipitation ? 1.0f : 0.0f; // Annahme: Niederschlag erhöht das Wachstum
 
         float modifier = getModifier(temperatureModifier, humidityModifier, precipitationModifier);
-        NaturesNicheMod.LOGGER.info("calculatedModifier: " + modifier);
+        NaturesNicheMod.LOGGER.debug("calculatedModifier: " + modifier);
         return modifier;
     }
 
