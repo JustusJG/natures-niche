@@ -3,7 +3,6 @@ package software.gunter.naturesniche.mixin;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,12 +26,10 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
 
     @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
     public void randomTickInject(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
-        String cropIdentifier = Registry.BLOCK.getId(state.getBlock()).toString();
         Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
-            String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
-            float multiplier = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
+            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
 
             if (multiplier <= 0.0f) {
                 ci.cancel();
@@ -53,12 +50,10 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
 
     @Inject(at = @At("HEAD"), method = "grow", cancellable = true)
     public void growInject(ServerWorld world, Random random, BlockPos pos, BlockState state, CallbackInfo ci) {
-        String cropIdentifier = Registry.BLOCK.getId(state.getBlock()).toString();
         Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
-            String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
-            float multiplier = NaturesNicheMod.CONFIG.getModifier(cropIdentifier, biomeIdentifier);
+            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
 
             if (multiplier < 1.0f) {
                 if (random.nextFloat() >= multiplier) {

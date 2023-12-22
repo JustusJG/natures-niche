@@ -1,8 +1,12 @@
 package software.gunter.naturesniche.config;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import software.gunter.naturesniche.NaturesNicheMod;
 import software.gunter.naturesniche.utils.RegistryUtil;
@@ -18,25 +22,25 @@ public class NaturesNicheConfig {
     private final Map<String, ModifierConfig> biomes = new HashMap<>();
 
     public void updateGrowthCondition(String identifier) {
-        NaturesNicheMod.LOGGER.debug("Updating growthConditions for " + identifier + "...");
+        NaturesNicheMod.LOGGER.info("Updating growthConditions for " + identifier + "...");
         growthConditions.putIfAbsent(identifier, defaultGrowthConditions);
-        NaturesNicheMod.LOGGER.debug("growthConditions for " + identifier + " updated.");
+        NaturesNicheMod.LOGGER.info("growthConditions for " + identifier + " updated.");
     }
 
     public void updateCrop(String identifier) {
-        NaturesNicheMod.LOGGER.debug("Updating crop " + identifier + "...");
+        NaturesNicheMod.LOGGER.info("Updating crop " + identifier + "...");
         ModifierConfig cropConfig = crops.getOrDefault(identifier, new ModifierConfig());
         cropConfig.updateModifiers(RegistryUtil.getBiomes(), biome -> String.valueOf(BuiltinRegistries.BIOME.getId((Biome) biome)));
         crops.put(identifier, cropConfig);
-        NaturesNicheMod.LOGGER.debug("Crop " + identifier + " updated.");
+        NaturesNicheMod.LOGGER.info("Crop " + identifier + " updated.");
     }
 
     public void updateBiome(String identifier) {
-        NaturesNicheMod.LOGGER.debug("Updating biome " + identifier + "...");
+        NaturesNicheMod.LOGGER.info("Updating biome " + identifier + "...");
         ModifierConfig biomeConfig = biomes.getOrDefault(identifier, new ModifierConfig());
         biomeConfig.updateModifiers(RegistryUtil.getCrops(), crop -> String.valueOf(Registry.BLOCK.getId((Block) crop)));
         biomes.put(identifier, biomeConfig);
-        NaturesNicheMod.LOGGER.debug("Biome " + identifier + " updated.");
+        NaturesNicheMod.LOGGER.info("Biome " + identifier + " updated.");
     }
 
     public void updateGrowthConditions() {
@@ -62,6 +66,26 @@ public class NaturesNicheConfig {
             String biomeIdentifier = String.valueOf(BuiltinRegistries.BIOME.getId(biome));
             updateBiome(biomeIdentifier);
         });
+    }
+
+    public float getModifier(BlockState state, ServerWorld world, BlockPos pos) {
+        String cropIdentifier = Registry.BLOCK.getId(state.getBlock()).toString();
+
+        Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
+        if (biomeKeyOptional.isPresent()) {
+            String biomeIdentifier = biomeKeyOptional.get().getValue().toString();
+            float modifier = getModifier(cropIdentifier, biomeIdentifier);
+            if (modifier >= 0.0f) {
+                return getModifier(cropIdentifier, biomeIdentifier);
+            }
+        }
+
+        Biome biome = world.getBiome(pos).value();
+        GrowthConditionsConfig conditions = growthConditions.get(cropIdentifier);
+        if (conditions != null) {
+            return growthConditions.get(cropIdentifier).calculateGrowthModifier(biome.getTemperature(), biome.getDownfall(), !biome.getPrecipitation().equals(Biome.Precipitation.NONE));
+        }
+        return defaultGrowthConditions.calculateGrowthModifier(biome.getTemperature(), biome.getDownfall(), !biome.getPrecipitation().equals(Biome.Precipitation.NONE));
     }
 
     public float getModifier(String cropIdentifier, String biomeIdentifier) {
