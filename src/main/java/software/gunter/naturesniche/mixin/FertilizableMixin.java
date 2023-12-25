@@ -15,7 +15,7 @@ import software.gunter.naturesniche.NaturesNicheMod;
 import java.util.Optional;
 import java.util.Random;
 
-@Mixin({CocoaBlock.class, SaplingBlock.class})
+@Mixin({CocoaBlock.class})
 public abstract class FertilizableMixin extends Block implements Fertilizable {
     @Unique
     private boolean $shouldInject = true;
@@ -53,7 +53,7 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
         Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
-            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
+            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos) * 2;
 
             if (multiplier < 1.0f) {
                 if (random.nextFloat() >= multiplier) {

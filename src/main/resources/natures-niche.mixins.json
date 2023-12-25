@@ -6,7 +6,8 @@
   "mixins": [
     "FertilizableMixin",
     "CropBlockMixin",
-    "StemBlockMixin"
+    "StemBlockMixin",
+    "SaplingBlockMixin"
   ],
   "client": [
   ],
