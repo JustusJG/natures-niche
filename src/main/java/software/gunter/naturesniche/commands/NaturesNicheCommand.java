@@ -2,76 +2,56 @@ package software.gunter.naturesniche.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.block.Block;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.registry.Registry;
 import software.gunter.naturesniche.NaturesNicheMod;
+import software.gunter.naturesniche.utils.NaturesNicheUtil;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class NaturesNicheCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("naturesniche").requires((source) -> source.hasPermissionLevel(2))
-                .then(CommandManager.literal("config")
-                        .then(CommandManager.literal("save")
+                .then(CommandManager.literal("debug")
+                        .then(CommandManager.literal("plantlist")
                                 .executes(context -> {
-                                    NaturesNicheMod.CONFIG_MANAGER.saveConfig();
-                                    context.getSource().sendFeedback(new LiteralText("Konfiguration gespeichert."), true);
+                                    NaturesNicheUtil.getPlantIdentifiers().forEach(identifier -> {
+                                        context.getSource().sendFeedback(Text.of(identifier), false);
+                                    });
                                     return 1;
                                 })
                         )
-                        .then(CommandManager.literal("reload")
+                        .then(CommandManager.literal("fullconfig")
                                 .executes(context -> {
                                     NaturesNicheMod.loadConfig();
-                                    context.getSource().sendFeedback(new LiteralText("Konfiguration neugeladen."), true);
+                                    NaturesNicheMod.CONFIG.loadNewPlants();
+                                    NaturesNicheMod.CONFIG.getPlants().forEach((identifier, plant) -> {
+                                        plant.loadNewBiomes();
+                                    });
+                                    NaturesNicheMod.CONFIG_MANAGER.saveConfig();
                                     return 1;
                                 })
                         )
-                        .then(CommandManager.literal("update")
-                                .executes(context -> {
-                                    NaturesNicheMod.CONFIG.update();
-                                    context.getSource().sendFeedback(new LiteralText("Konfiguration aktualisiert."), true);
-                                    return 1;
-                                })
-                        )
-                        .then(CommandManager.literal("crop")
-                                .then(CommandManager.literal("init")
-                                        .executes(context -> updateConfig(context, "crop", null))
-                                        .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
-                                                .executes(context -> {
-                                                    String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
-                                                    return updateConfig(context, "crop", identifier);
-                                                })
-                                        ))
-                        )
-                        .then(CommandManager.literal("biome")
-                                .then(CommandManager.literal("init")
-                                        .executes(context -> updateConfig(context, "biome", null))
-                                        .then(CommandManager.argument("identifier", IdentifierArgumentType.identifier())
-                                                .executes(context -> {
-                                                    String identifier = IdentifierArgumentType.getIdentifier(context, "identifier").toString();
-                                                    return updateConfig(context, "biome", identifier);
-                                                })
-                                        ))
-                        )
+                )
+                .then(CommandManager.literal("reload")
+                        .executes(context -> {
+                            NaturesNicheMod.loadConfig();
+                            context.getSource().sendFeedback(new LiteralText("NatureNiche reloaded"), true);
+                            return 1;
+                        })
                 )
         );
     }
 
     private static int updateConfig(CommandContext<ServerCommandSource> context, String type, @Nullable String identifier) {
         if (type.equals("crop")) {
-            if (identifier == null) {
-                NaturesNicheMod.CONFIG.updateCrops();
-            } else {
-                NaturesNicheMod.CONFIG.updateCrop(identifier);
-            }
         } else if (type.equals("biome")) {
-            if (identifier == null) {
-                NaturesNicheMod.CONFIG.updateBiomes();
-            } else {
-                NaturesNicheMod.CONFIG.updateBiome(identifier);
-            }
         }
 
         NaturesNicheMod.CONFIG_MANAGER.saveConfig();
