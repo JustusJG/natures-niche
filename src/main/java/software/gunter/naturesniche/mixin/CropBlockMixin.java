@@ -45,6 +45,8 @@ public abstract class CropBlockMixin extends Block implements Fertilizable {
     @Shadow
     public abstract BlockState withAge(int age);
 
+    @Shadow public abstract IntProperty getAgeProperty();
+
     public CropBlockMixin(Settings settings) {
         super(settings);
     }
@@ -62,7 +64,7 @@ public abstract class CropBlockMixin extends Block implements Fertilizable {
             float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, 0.511);
 
             if (world.getBaseLightLevel(pos, 0) >= 9) {
-                int i = state.get(AGE);
+                int i = state.get(getAgeProperty());
                 if (i < getMaxAge()) {
                     float f = getAvailableMoisture(this, world, pos);
                     f *= multiplier;
