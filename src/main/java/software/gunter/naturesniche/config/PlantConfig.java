@@ -48,7 +48,6 @@ public class PlantConfig {
 
     public void loadNewBiomes() {
         NaturesNicheUtil.getBiomes().forEach(biome -> {
-            System.out.println(biome);
             String identifier = String.valueOf(BuiltinRegistries.BIOME.getId(biome));
             getBiomes().put(identifier, getGrowthConditions());
         });
