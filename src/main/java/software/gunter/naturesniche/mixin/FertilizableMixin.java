@@ -15,7 +15,7 @@ import software.gunter.naturesniche.NaturesNicheMod;
 import java.util.Optional;
 import java.util.Random;
 
-@Mixin({CocoaBlock.class, StemBlock.class, SaplingBlock.class})
+@Mixin({CocoaBlock.class, SaplingBlock.class})
 public abstract class FertilizableMixin extends Block implements Fertilizable {
     @Unique
     private boolean $shouldInject = true;
