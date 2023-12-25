@@ -9,7 +9,7 @@ public class GrowthConditionsConfig {
     private final float temperature;
     private final float humidity;
     private final boolean precipitation;
-    private String fx = "-1 + 1 * e^(0.7 * x)";
+    private String fx;
 
     public GrowthConditionsConfig(float temperature, float humidity, boolean precipitation) {
         this.temperature = temperature;
