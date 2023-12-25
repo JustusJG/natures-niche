@@ -1,19 +1,12 @@
 package software.gunter.naturesniche.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.block.Block;
-import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 import software.gunter.naturesniche.NaturesNicheMod;
 import software.gunter.naturesniche.utils.NaturesNicheUtil;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class NaturesNicheCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -47,17 +40,5 @@ public class NaturesNicheCommand {
                         })
                 )
         );
-    }
-
-    private static int updateConfig(CommandContext<ServerCommandSource> context, String type, @Nullable String identifier) {
-        if (type.equals("crop")) {
-        } else if (type.equals("biome")) {
-        }
-
-        NaturesNicheMod.CONFIG_MANAGER.saveConfig();
-        String feedbackMessage = "Fehlende Konfigurationen " + (identifier == null ? "hinzugefügt." : "dem " + type + " " + identifier + " hinzugefügt.");
-        context.getSource().sendFeedback(new LiteralText(feedbackMessage), true);
-
-        return 1;
     }
 }

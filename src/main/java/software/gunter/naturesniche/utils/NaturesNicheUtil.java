@@ -2,9 +2,7 @@ package software.gunter.naturesniche.utils;
 
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
-import net.minecraft.text.Text;
 import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
