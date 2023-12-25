@@ -6,10 +6,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
+import org.apache.commons.lang3.StringUtils;
+import software.gunter.naturesniche.NaturesNicheMod;
 import software.gunter.naturesniche.utils.NaturesNicheUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PlantConfig {
@@ -30,12 +33,38 @@ public class PlantConfig {
         Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
         if (biomeKeyOptional.isPresent()) {
             String identifier = biomeKeyOptional.get().getValue().toString();
-            return getBiomes().getOrDefault(identifier, getGrowthConditions());
+            GrowthConditionsConfig tmpGrowthConditions = new GrowthConditionsConfig(NaturesNicheMod.CONFIG.getDefaultGrowthConditions());
+            if (tmpGrowthConditions.getHumidity() != growthConditions.getHumidity() && !Float.isNaN(growthConditions.getHumidity())) {
+                tmpGrowthConditions.setHumidity(growthConditions.getHumidity());
+            }
+            if (tmpGrowthConditions.getTemperature() != growthConditions.getTemperature() && !Float.isNaN(growthConditions.getTemperature())) {
+                tmpGrowthConditions.setTemperature(growthConditions.getTemperature());
+            }
+            if (tmpGrowthConditions.isPrecipitation() != growthConditions.isPrecipitation()) {
+                tmpGrowthConditions.setPrecipitation(growthConditions.isPrecipitation());
+            }
+            if (!Objects.equals(tmpGrowthConditions.getFx(), growthConditions.getFx()) && !StringUtils.isBlank(growthConditions.getFx())) {
+                tmpGrowthConditions.setFx(growthConditions.getFx());
+            }
+            return tmpGrowthConditions;
         }
         return getGrowthConditions();
     }
 
     public GrowthConditionsConfig getGrowthConditions() {
+        GrowthConditionsConfig growthConditions = NaturesNicheMod.CONFIG.getDefaultGrowthConditions();
+        if (this.growthConditions.getHumidity() != growthConditions.getHumidity()) {
+            this.growthConditions.setHumidity(growthConditions.getHumidity());
+        }
+        if (this.growthConditions.getTemperature() != growthConditions.getTemperature()) {
+            this.growthConditions.setTemperature(growthConditions.getTemperature());
+        }
+        if (this.growthConditions.isPrecipitation() != growthConditions.isPrecipitation()) {
+            this.growthConditions.setPrecipitation(growthConditions.isPrecipitation());
+        }
+        if (!Objects.equals(this.growthConditions.getFx(), growthConditions.getFx())) {
+            this.growthConditions.setFx(growthConditions.getFx());
+        }
         return growthConditions;
     }
 

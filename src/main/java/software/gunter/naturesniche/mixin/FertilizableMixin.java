@@ -29,7 +29,7 @@ public abstract class FertilizableMixin extends Block implements Fertilizable {
         Optional<RegistryKey<Biome>> biomeKeyOptional = world.getBiome(pos).getKey();
 
         if (biomeKeyOptional.isPresent() && $shouldInject) {
-            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
+            float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos) * 2;
 
             if (multiplier <= 0.0f) {
                 ci.cancel();

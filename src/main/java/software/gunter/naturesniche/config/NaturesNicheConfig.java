@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import software.gunter.naturesniche.utils.NaturesNicheUtil;
 
@@ -34,6 +35,10 @@ public class NaturesNicheConfig {
                     .replace("}", "");
             plants.putIfAbsent(identifier, new PlantConfig());
         });
+    }
+
+    public GrowthConditionsConfig getDefaultGrowthConditions() {
+        return defaultGrowthConditions;
     }
 
     public Map<String, PlantConfig> getPlants() {

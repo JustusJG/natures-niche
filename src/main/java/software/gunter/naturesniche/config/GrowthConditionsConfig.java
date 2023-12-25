@@ -6,10 +6,17 @@ import software.gunter.naturesniche.NaturesNicheMod;
 import software.gunter.naturesniche.utils.SuperMath;
 
 public class GrowthConditionsConfig {
-    private final float temperature;
-    private final float humidity;
-    private final boolean precipitation;
+    private float temperature;
+    private float humidity;
+    private boolean precipitation;
     private String fx;
+
+    public GrowthConditionsConfig(GrowthConditionsConfig growthConditionsConfig) {
+        this.temperature = growthConditionsConfig.temperature;
+        this.humidity = growthConditionsConfig.humidity;
+        this.precipitation = growthConditionsConfig.precipitation;
+        this.fx = growthConditionsConfig.fx;
+    }
 
     public GrowthConditionsConfig(float temperature, float humidity, boolean precipitation) {
         this.temperature = temperature;
@@ -25,7 +32,7 @@ public class GrowthConditionsConfig {
     public float calculateGrowthModifier(float temperature, float humidity, boolean precipitation) {
         float temperatureModifier = calculateTemperatureModifier(temperature); // min 0.0, max 1.0
         float humidityModifier = calculateHumidityModifier(humidity); // min 0.0, max 1.0
-        float precipitationModifier = precipitation ? 1.0f : 0.0f; // Annahme: Niederschlag erhöht das Wachstum
+        float precipitationModifier = this.precipitation == precipitation ? 1.0f : 0.0f; // Annahme: Niederschlag erhöht das Wachstum
 
         float modifier = getModifier(temperatureModifier, humidityModifier, precipitationModifier);
         NaturesNicheMod.LOGGER.debug("calculatedModifier: " + modifier);
@@ -74,5 +81,21 @@ public class GrowthConditionsConfig {
 
     public String getFx() {
         return fx;
+    }
+
+    public void setTemperature(float temperature) {
+        this.temperature = temperature;
+    }
+
+    public void setHumidity(float humidity) {
+        this.humidity = humidity;
+    }
+
+    public void setPrecipitation(boolean precipitation) {
+        this.precipitation = precipitation;
+    }
+
+    public void setFx(String fx) {
+        this.fx = fx;
     }
 }
