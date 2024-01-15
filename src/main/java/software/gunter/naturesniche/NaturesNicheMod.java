@@ -40,6 +40,7 @@ public class NaturesNicheMod implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> NaturesNicheCommand.register(dispatcher));
 
+		CONFIG = new NaturesNicheConfig();
 		CONFIG_MANAGER = new ConfigManager();
 		CONFIG_MANAGER.loadConfig();
 	}
