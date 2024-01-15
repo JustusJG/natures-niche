@@ -24,6 +24,7 @@ public class NaturesNicheConfig {
     private final GameRules.Key<GameRules.BooleanRule> DEFAULT_GROWTH_PRECIPITATION =
             GameRuleRegistry.register("defaultGrowthPrecipitation", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
+    private final Map<String, BiomeConfig> biomes = new HashMap<>();
     private final Map<String, Plant> plants = new HashMap<>();
 
     public float getModifier(BlockState state, ServerWorld world, BlockPos pos) {
@@ -36,6 +37,7 @@ public class NaturesNicheConfig {
         Plant defaultPlant = new Plant(new GrowthConditions(defaultTemperature, defaultHumidity, defaultPrecipitation, "-1 + 1 * e^(0.7 * x)"));
 
         Biome biome = world.getBiome(pos).value();
+
         Identifier biomeId = BuiltinRegistries.BIOME.getId(biome);
         return getPlants()
                 .getOrDefault(plantIdentifier, defaultPlant).getGrowthConditions(String.valueOf(biomeId))
@@ -43,6 +45,9 @@ public class NaturesNicheConfig {
     }
 
 
+    public Map<String, BiomeConfig> getBiomes() {
+        return biomes;
+    }
     public Map<String, Plant> getPlants() {
         return plants;
     }

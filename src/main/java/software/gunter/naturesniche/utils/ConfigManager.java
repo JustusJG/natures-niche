@@ -3,12 +3,18 @@ package software.gunter.naturesniche.utils;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.biome.Biome;
+import software.gunter.naturesniche.config.BiomeConfig;
 import software.gunter.naturesniche.config.GrowthConditions;
 import software.gunter.naturesniche.config.NaturesNicheConfig;
 import software.gunter.naturesniche.NaturesNicheMod;
@@ -28,54 +34,67 @@ public class ConfigManager {
                 .registerTypeAdapter(new TypeToken<Map<String, GrowthConditions>>() {
                 }.getType(), new ConfigManager.BiomeSpecificGrowthConditionsDeserializer())
                 .create();
-
-        loadConfig();
     }
 
-    public void loadConfig() {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public Identifier getFabricId() {
-                return new Identifier("natures-niche", "plants");
-            }
+    public void loadConfig(ResourceManager manager) {
+        // Clear Caches Here
+        NaturesNicheMod.CONFIG.getPlants().clear();
 
-            @Override
-            public void reload(ResourceManager manager) {
-                // Clear Caches Here
-                NaturesNicheMod.CONFIG.getPlants().clear();
+        for (Identifier id : manager.findResources("plants", path -> path.endsWith(".json"))) {
+            try (InputStream stream = manager.getResource(id).getInputStream()) {
+                JsonReader reader = new JsonReader(new InputStreamReader(stream));
+                JsonElement element = JsonParser.parseReader(reader);
 
-                for (Identifier id : manager.findResources("plants", path -> path.endsWith(".json"))) {
-                    try (InputStream stream = manager.getResource(id).getInputStream()) {
-                        JsonReader reader = new JsonReader(new InputStreamReader(stream));
-                        JsonElement element = JsonParser.parseReader(reader);
+                if (element.isJsonObject()) {
+                    JsonObject jsonObject = element.getAsJsonObject();
 
-                        if (element.isJsonObject()) {
-                            JsonObject jsonObject = element.getAsJsonObject();
-
-                            String plantId;
-                            if (jsonObject.has("id")) {
-                                // Extrahieren der ID aus dem JSON-Objekt, falls vorhanden
-                                plantId = jsonObject.get("id").getAsString();
-                            } else {
-                                // Extrahieren der ID aus dem Dateipfad, falls keine ID im JSON-Objekt vorhanden ist
-                                String fullPath = id.getPath();
-                                plantId = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
-                            }
-
-                            NaturesNicheMod.LOGGER.error(plantId);
-
-                            Plant plant = GSON.fromJson(jsonObject, Plant.class);
-                            NaturesNicheMod.CONFIG.getPlants().put(plantId, plant);
-                        }
-                    } catch (Exception e) {
-                        NaturesNicheMod.LOGGER.error("Error occurred while loading resource json " + id, e);
+                    String plantId;
+                    if (jsonObject.has("id")) {
+                        // Extrahieren der ID aus dem JSON-Objekt, falls vorhanden
+                        plantId = jsonObject.get("id").getAsString();
+                    } else {
+                        // Extrahieren der ID aus dem Dateipfad, falls keine ID im JSON-Objekt vorhanden ist
+                        String fullPath = id.getPath();
+                        plantId = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
                     }
-                }
 
-                NaturesNicheMod.CONFIG.getPlants().forEach((key, value) -> {
-                    NaturesNicheMod.LOGGER.info(key + " : " + value.toString());
-                });
+                    Plant plant = GSON.fromJson(jsonObject, Plant.class);
+                    NaturesNicheMod.CONFIG.getPlants().put(plantId, plant);
+                }
+            } catch (Exception e) {
+                NaturesNicheMod.LOGGER.error("Error occurred while loading resource json " + id, e);
             }
+        }
+
+        for (Identifier id : manager.findResources("biomes", path -> path.endsWith(".json"))) {
+            try (InputStream stream = manager.getResource(id).getInputStream()) {
+                JsonReader reader = new JsonReader(new InputStreamReader(stream));
+                JsonElement element = JsonParser.parseReader(reader);
+
+                if (element.isJsonObject()) {
+                    JsonObject jsonObject = element.getAsJsonObject();
+
+                    String biomeId;
+                    if (jsonObject.has("id")) {
+                        biomeId = jsonObject.get("id").getAsString();
+                    } else {
+                        String fullPath = id.getPath();
+                        biomeId = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
+                    }
+
+                    Identifier biomeIdentifier = Identifier.tryParse(biomeId);
+                    JsonObject climateObject = jsonObject.get("climate").getAsJsonObject();
+                    BiomeConfig nnBiome = new BiomeConfig(climateObject.get("temperature").getAsFloat(), climateObject.get("humidity").getAsFloat(), climateObject.get("precipitation").getAsBoolean(), Biome.TemperatureModifier.byName(climateObject.get("temperatureModifier").getAsString()));
+                    assert biomeIdentifier != null;
+                    NaturesNicheMod.CONFIG.getBiomes().put(String.valueOf(biomeIdentifier), nnBiome);
+                }
+            } catch (Exception e) {
+                NaturesNicheMod.LOGGER.error("Error occurred while loading resource json " + id, e);
+            }
+        }
+
+        NaturesNicheMod.CONFIG.getPlants().forEach((key, value) -> {
+            NaturesNicheMod.LOGGER.info(key + " : " + value.toString());
         });
     }
 

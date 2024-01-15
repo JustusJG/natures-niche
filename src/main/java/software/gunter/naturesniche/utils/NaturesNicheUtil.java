@@ -2,14 +2,18 @@ package software.gunter.naturesniche.utils;
 
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NaturesNicheUtil {
+    public static final Map<Identifier, Biome> BIOMES = new HashMap<>();
     public static List<String> getBiomeIdentifiers() {
         List<String> l = new ArrayList<>();
         List<Biome> biomes = NaturesNicheUtil.getBiomes();

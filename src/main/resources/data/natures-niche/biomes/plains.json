@@ -1,0 +1,9 @@
+{
+  "climate": {
+    "temperature": 2.0,
+    "humidity": 0.4,
+    "precipitation": true,
+    "temperatureModifier": "none"
+  },
+  "id": "minecraft:plains"
+}

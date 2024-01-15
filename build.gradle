@@ -31,6 +31,9 @@ dependencies {
 	// Math Stuff
 	implementation "org.mariuszgromada.math:MathParser.org-mXparser:5.2.1"
 	include "org.mariuszgromada.math:MathParser.org-mXparser:5.2.1"
+
+	// Mixins!!! You're a pain in the ass!!!
+	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.2")))
 }
 
 processResources {
