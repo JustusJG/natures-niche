@@ -10,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NaturesNicheUtil {
+    public static List<String> getBiomeIdentifiers() {
+        List<String> l = new ArrayList<>();
+        List<Biome> biomes = NaturesNicheUtil.getBiomes();
+        biomes.forEach(biome -> {
+            l.add(String.valueOf(BuiltinRegistries.BIOME.getId(biome)));
+        });
+        return l;
+    }
+
     public static List<String> getPlantIdentifiers() {
         List<String> l = new ArrayList<>();
         List<Block> plants = NaturesNicheUtil.getPlants();

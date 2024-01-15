@@ -12,6 +12,14 @@ public class NaturesNicheCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("naturesniche").requires((source) -> source.hasPermissionLevel(2))
                 .then(CommandManager.literal("debug")
+                        .then(CommandManager.literal("biomelist")
+                                .executes(context -> {
+                                    NaturesNicheUtil.getBiomeIdentifiers().forEach(identifier -> {
+                                        context.getSource().sendFeedback(Text.of(identifier), false);
+                                    });
+                                    return 1;
+                                })
+                        )
                         .then(CommandManager.literal("plantlist")
                                 .executes(context -> {
                                     NaturesNicheUtil.getPlantIdentifiers().forEach(identifier -> {
@@ -20,24 +28,6 @@ public class NaturesNicheCommand {
                                     return 1;
                                 })
                         )
-                        .then(CommandManager.literal("fullconfig")
-                                .executes(context -> {
-                                    NaturesNicheMod.loadConfig();
-                                    NaturesNicheMod.CONFIG.loadNewPlants();
-                                    NaturesNicheMod.CONFIG.getPlants().forEach((identifier, plant) -> {
-                                        plant.loadNewBiomes();
-                                    });
-                                    NaturesNicheMod.CONFIG_MANAGER.saveConfig();
-                                    return 1;
-                                })
-                        )
-                )
-                .then(CommandManager.literal("reload")
-                        .executes(context -> {
-                            NaturesNicheMod.loadConfig();
-                            context.getSource().sendFeedback(new LiteralText("NatureNiche reloaded"), true);
-                            return 1;
-                        })
                 )
         );
     }

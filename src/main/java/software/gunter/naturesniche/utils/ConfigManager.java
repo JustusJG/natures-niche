@@ -1,65 +1,104 @@
 package software.gunter.naturesniche.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
+import software.gunter.naturesniche.config.GrowthConditions;
 import software.gunter.naturesniche.config.NaturesNicheConfig;
 import software.gunter.naturesniche.NaturesNicheMod;
+import software.gunter.naturesniche.config.Plant;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigManager {
-    public static final JsonParser JSON_PARSER = new JsonParser();
-    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve(NaturesNicheMod.MOD_ID + ".json");
-
-    private static NaturesNicheConfig CONFIG;
-
-    public NaturesNicheConfig getConfig() {
-        return CONFIG;
-    }
+    private final Gson GSON;
 
     public ConfigManager() {
-        NaturesNicheMod.LOGGER.info("Initialize config");
+        GSON = new GsonBuilder()
+                .registerTypeAdapter(new TypeToken<Map<String, GrowthConditions>>() {
+                }.getType(), new ConfigManager.BiomeSpecificGrowthConditionsDeserializer())
+                .create();
+
         loadConfig();
     }
 
     public void loadConfig() {
-        File configFile = new File(String.valueOf(CONFIG_PATH));
-
-        NaturesNicheMod.LOGGER.info("Trying to read config file...");
-        try {
-            if (configFile.createNewFile()) {
-                NaturesNicheMod.LOGGER.info("No config file found, creating a new one...");
-                String json = GSON.toJson(JSON_PARSER.parse(GSON.toJson(new NaturesNicheConfig())));
-                try (PrintWriter out = new PrintWriter(configFile)) {
-                    out.println(json);
-                }
-                CONFIG = new NaturesNicheConfig();
-                NaturesNicheMod.LOGGER.info("Successfully created default config file.");
-            } else {
-                NaturesNicheMod.LOGGER.info("A config file was found, loading it..");
-                CONFIG = GSON.fromJson(new String(Files.readAllBytes(configFile.toPath())), NaturesNicheConfig.class);
-                if(CONFIG == null) {
-                    throw new NullPointerException("The config file was empty.");
-                }else{
-                    NaturesNicheMod.LOGGER.info("Successfully loaded config file.");
-                }
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public Identifier getFabricId() {
+                return new Identifier("natures-niche", "plants");
             }
-        }catch (Exception exception) {
-            NaturesNicheMod.LOGGER.error("There was an error creating/loading the config file!", exception);
-            CONFIG = new NaturesNicheConfig();
-            NaturesNicheMod.LOGGER.warn("Defaulting to original config.");
-        }
+
+            @Override
+            public void reload(ResourceManager manager) {
+                // Clear Caches Here
+                NaturesNicheMod.CONFIG.getPlants().clear();
+
+                for (Identifier id : manager.findResources("plants", path -> path.endsWith(".json"))) {
+                    try (InputStream stream = manager.getResource(id).getInputStream()) {
+                        JsonReader reader = new JsonReader(new InputStreamReader(stream));
+                        JsonElement element = JsonParser.parseReader(reader);
+
+                        if (element.isJsonObject()) {
+                            JsonObject jsonObject = element.getAsJsonObject();
+
+                            String plantId;
+                            if (jsonObject.has("id")) {
+                                // Extrahieren der ID aus dem JSON-Objekt, falls vorhanden
+                                plantId = jsonObject.get("id").getAsString();
+                            } else {
+                                // Extrahieren der ID aus dem Dateipfad, falls keine ID im JSON-Objekt vorhanden ist
+                                String fullPath = id.getPath();
+                                plantId = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
+                            }
+
+                            NaturesNicheMod.LOGGER.error(plantId);
+
+                            Plant plant = GSON.fromJson(jsonObject, Plant.class);
+                            NaturesNicheMod.CONFIG.getPlants().put(plantId, plant);
+                        }
+                    } catch (Exception e) {
+                        NaturesNicheMod.LOGGER.error("Error occurred while loading resource json " + id, e);
+                    }
+                }
+
+                NaturesNicheMod.CONFIG.getPlants().forEach((key, value) -> {
+                    NaturesNicheMod.LOGGER.info(key + " : " + value.toString());
+                });
+            }
+        });
     }
 
-    public void saveConfig() {
-        try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
-            GSON.toJson(CONFIG, writer);
-        } catch (IOException e) {
-            NaturesNicheMod.LOGGER.error("Failed to save config: ", e);
+    protected static class BiomeSpecificGrowthConditionsDeserializer implements JsonDeserializer<Map<String, GrowthConditions>> {
+        @Override
+        public Map<String, GrowthConditions> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Map<String, GrowthConditions> biomeSpecificMap = new HashMap<>();
+            JsonArray biomeSpecificArray = json.getAsJsonArray();
+
+            for (JsonElement element : biomeSpecificArray) {
+                JsonObject biomeObject = element.getAsJsonObject();
+                String id = biomeObject.get("id").getAsString();
+
+                GrowthConditions conditions = new GrowthConditions(
+                        biomeObject.get("temperature").getAsFloat(),
+                        biomeObject.get("humidity").getAsFloat(),
+                        biomeObject.get("precipitation").getAsBoolean(),
+                        biomeObject.has("fx") ? biomeObject.get("fx").getAsString() : null
+                );
+
+                biomeSpecificMap.put(id, conditions);
+            }
+            return biomeSpecificMap;
         }
     }
 }
