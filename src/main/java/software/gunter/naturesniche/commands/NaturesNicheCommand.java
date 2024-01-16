@@ -24,8 +24,8 @@ public class NaturesNicheCommand {
                 .then(CommandManager.literal("debug")
                         .then(CommandManager.literal("biomelist")
                                 .executes(context -> {
-                                    NaturesNicheUtil.getBiomeIdentifiers().forEach(identifier -> {
-                                        context.getSource().sendFeedback(Text.of(identifier), false);
+                                    NaturesNicheUtil.getBiomes().forEach(biome -> {
+                                        context.getSource().sendFeedback(Text.of(biomeClimateString(biome, BuiltinRegistries.BIOME.getId(biome))), false);
                                     });
                                     return 1;
                                 })
