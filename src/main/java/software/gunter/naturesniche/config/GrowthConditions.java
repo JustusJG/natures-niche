@@ -10,6 +10,10 @@ public class GrowthConditions {
     private boolean precipitation;
     private final String fx;
 
+    public GrowthConditions(float temperature, float humidity, boolean precipitation) {
+        this(temperature, humidity, precipitation, "-1 + 1 * e^(0.7 * x)");
+    }
+
     public GrowthConditions(float temperature, float humidity, boolean precipitation, String fx) {
         this.temperature = temperature;
         this.humidity = humidity;

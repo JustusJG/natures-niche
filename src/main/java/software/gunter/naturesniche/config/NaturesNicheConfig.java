@@ -33,7 +33,7 @@ public class NaturesNicheConfig {
         float defaultTemperature = (float) gameRules.get(DEFAULT_GROWTH_TEMPERATURE).get();
         float defaultHumidity = (float) gameRules.get(DEFAULT_GROWTH_HUMIDITY).get();
         boolean defaultPrecipitation = gameRules.get(DEFAULT_GROWTH_PRECIPITATION).get();
-        Plant defaultPlant = new Plant(new GrowthConditions(defaultTemperature, defaultHumidity, defaultPrecipitation, "-1 + 1 * e^(0.7 * x)"));
+        Plant defaultPlant = new Plant(new GrowthConditions(defaultTemperature, defaultHumidity, defaultPrecipitation));
 
         Biome biome = world.getBiome(pos).value();
 
