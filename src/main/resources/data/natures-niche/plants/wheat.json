@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.80,
+    "humidity": 0.40,
+    "precipitation": true
+  },
+  "id": "minecraft:wheat"
+}

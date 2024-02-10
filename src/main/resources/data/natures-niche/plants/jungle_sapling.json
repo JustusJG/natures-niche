@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.95,
+    "humidity": 0.90,
+    "precipitation": true
+  },
+  "id": "minecraft:jungle_sapling"
+}

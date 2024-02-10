@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.25,
+    "humidity": 0.80,
+    "precipitation": true
+  },
+  "id": "minecraft:spruce_sapling"
+}

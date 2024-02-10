@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.70,
+    "humidity": 0.60,
+    "precipitation": true
+  },
+  "id": "minecraft:oak_sapling"
+}

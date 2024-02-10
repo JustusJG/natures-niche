@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.60,
+    "humidity": 0.60,
+    "precipitation": true
+  },
+  "id": "minecraft:birch_sapling"
+}

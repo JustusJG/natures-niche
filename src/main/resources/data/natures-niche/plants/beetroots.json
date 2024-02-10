@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.65,
+    "humidity": 0.70,
+    "precipitation": true
+  },
+  "id": "minecraft:beetroots"
+}

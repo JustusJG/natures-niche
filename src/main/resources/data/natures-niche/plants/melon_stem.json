@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.95,
+    "humidity": 0.70,
+    "precipitation": true
+  },
+  "id": "minecraft:melon_stem"
+}

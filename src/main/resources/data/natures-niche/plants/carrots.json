@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.75,
+    "humidity": 0.50,
+    "precipitation": true
+  },
+  "id": "minecraft:carrots"
+}

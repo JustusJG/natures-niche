@@ -1,0 +1,8 @@
+{
+  "growthConditions": {
+    "temperature": 0.75,
+    "humidity": 0.60,
+    "precipitation": true
+  },
+  "id": "minecraft:potatoes"
+}
