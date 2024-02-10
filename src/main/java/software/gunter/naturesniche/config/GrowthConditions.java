@@ -8,10 +8,10 @@ public class GrowthConditions {
     private float temperature;
     private float humidity;
     private boolean precipitation;
-    private final String fx;
+    private String fx;
 
     public GrowthConditions(float temperature, float humidity, boolean precipitation) {
-        this(temperature, humidity, precipitation, "-1 + 1 * e^(0.7 * x)");
+        this(temperature, humidity, precipitation, "x");
     }
 
     public GrowthConditions(float temperature, float humidity, boolean precipitation, String fx) {
@@ -30,7 +30,7 @@ public class GrowthConditions {
         float combinedModifier = (temperatureModifier + humidityModifier + precipitationModifier) * (maxModifier / 3.0f);
 
         Argument combinedModifierArgument = new Argument("x", combinedModifier);
-        Expression expression = new Expression(fx, combinedModifierArgument);
+        Expression expression = new Expression(getFx(), combinedModifierArgument);
 
         float modifier = (float) expression.calculate();
         modifier = Math.max(0.0f, Math.min(maxModifier, modifier));
@@ -54,18 +54,21 @@ public class GrowthConditions {
     }
 
     private float calculatePrecipitationModifier(boolean precipitation) {
-        return this.precipitation == precipitation ? 1.0f : 0.0f;
+        return this.precipitation == precipitation ? 1.0f : 0.5f;
     }
 
     public void setTemperature(float temperature) { this.temperature = temperature; }
     public void setHumidity(float humidity) { this.humidity = humidity; }
     public void setPrecipitation(boolean precipitation) { this.precipitation = precipitation; }
+    public void setFx(String fx) {
+        this.fx = fx;
+    }
 
     // Getter-Methoden für die Felder
     public float getTemperature() { return temperature; }
     public float getHumidity() { return humidity; }
     public boolean isPrecipitation() { return precipitation; }
-    public String getFx() { return fx; }
+    public String getFx() { return (fx != null && !fx.isEmpty() ? fx : "x"); }
 
     // Optional: toString-Methode für die Ausgabe der Wachstumsbedingungen
     @Override
