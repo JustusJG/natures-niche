@@ -4,8 +4,6 @@
   "package": "software.gunter.naturesniche.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BiomeAccessor",
-    "BiomeMixin",
     "CocoaBlockMixin",
     "CropBlockMixin",
     "SaplingBlockMixin",

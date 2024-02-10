@@ -5,14 +5,5 @@
     "precipitation": true,
     "fx": "-1 + 1 * e^(0.7 * x)"
   },
-  "id": "minecraft:cocoa",
-  "biomeSpecificGrowthConditions": [
-    {
-      "id": "minecraft:snowy_slopes",
-      "temperature": 0.5,
-      "humidity": 0.5,
-      "precipitation": true,
-      "fx": "-1 + 1 * e^(0.7 * x)"
-    }
-  ]
+  "id": "minecraft:cocoa"
 }

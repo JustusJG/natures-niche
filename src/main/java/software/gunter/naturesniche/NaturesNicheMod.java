@@ -1,40 +1,21 @@
 package software.gunter.naturesniche;
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import it.unimi.dsi.fastutil.longs.Long2FloatLinkedOpenHashMap;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import org.mariuszgromada.math.mxparser.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.gunter.naturesniche.commands.NaturesNicheCommand;
-import software.gunter.naturesniche.config.BiomeConfig;
-import software.gunter.naturesniche.config.GrowthConditions;
 import software.gunter.naturesniche.config.NaturesNicheConfig;
-import software.gunter.naturesniche.config.Plant;
 import software.gunter.naturesniche.utils.ConfigManager;
-import software.gunter.naturesniche.utils.NaturesNicheUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 public class NaturesNicheMod implements ModInitializer {
     public static String MOD_ID = "natures-niche";
