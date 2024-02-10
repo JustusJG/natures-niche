@@ -5,18 +5,20 @@ import java.util.Map;
 
 public class Plant {
     private final GrowthConditions growthConditions;
-    private final Map<String, GrowthConditions> biomeSpecificGrowthConditions;
+    private final Map<String, GrowthConditions> biomeSpecificGrowthConditions = new HashMap<>();
 
     public Plant(GrowthConditions growthConditions) {
         this.growthConditions = growthConditions;
-        this.biomeSpecificGrowthConditions = new HashMap<>();
     }
 
     public GrowthConditions getGrowthConditions(String biome) {
-        return biomeSpecificGrowthConditions.getOrDefault(biome, growthConditions);
+        return getBiomeSpecificGrowthConditions().getOrDefault(biome, growthConditions);
     }
 
     public Map<String, GrowthConditions> getBiomeSpecificGrowthConditions() {
+        if (biomeSpecificGrowthConditions == null) {
+            return new HashMap<String, GrowthConditions>();
+        }
         return biomeSpecificGrowthConditions;
     }
 
