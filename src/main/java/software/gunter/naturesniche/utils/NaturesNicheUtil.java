@@ -3,8 +3,11 @@ package software.gunter.naturesniche.utils;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
 import java.util.ArrayList;
@@ -60,5 +63,30 @@ public class NaturesNicheUtil {
                 || block instanceof StemBlock
                 || block instanceof CocoaBlock
                 || block instanceof SaplingBlock;
+    }
+
+    public static boolean precipitates(World world, BlockPos blockPos) {
+            if (!world.isRaining()) {
+                return false;
+            }
+            if (!world.isSkyVisible(blockPos)) {
+                return false;
+            }
+            if (world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
+                return false;
+            }
+            return true;
+    }
+
+    public static boolean rains(World world, BlockPos blockPos) {
+        return world.hasRain(blockPos);
+    }
+
+    public static boolean snows(World world, BlockPos blockPos) {
+        if (!precipitates(world, blockPos)) {
+            return false;
+        }
+        Biome biome = world.getBiome(blockPos).value();
+        return biome.getPrecipitation() == Biome.Precipitation.SNOW && !biome.doesNotSnow(blockPos);
     }
 }
