@@ -17,7 +17,7 @@ public class Plant {
 
     public Map<String, GrowthConditions> getBiomeSpecificGrowthConditions() {
         if (biomeSpecificGrowthConditions == null) {
-            return new HashMap<String, GrowthConditions>();
+            return new HashMap<>();
         }
         return biomeSpecificGrowthConditions;
     }
