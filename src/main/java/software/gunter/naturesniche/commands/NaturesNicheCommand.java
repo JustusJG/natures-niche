@@ -88,20 +88,18 @@ public class NaturesNicheCommand {
 
     private static String posClimateString(World world, BlockPos pos) {
         RegistryEntry<Biome> biomeReg = world.getBiome(pos);
+        Optional<RegistryKey<Biome>> biomeRegKey = biomeReg.getKey();
         Biome biome;
-
-        Identifier biomeId = biomeReg.getKey().get().getValue();
-        biome = BuiltinRegistries.BIOME.get(biomeId);
+        if (biomeRegKey.isPresent()) {
+            biome = BuiltinRegistries.BIOME.get(biomeRegKey.get());
+        } else {
+            biome = biomeReg.value();
+        }
 
         if (biome == null) {
-            return String.format("Biome-Details für '%s' konnten nicht gefunden werden.", pos);
+            return String.format("Biome für '%s' konnten nicht gefunden werden.", pos);
         }
-
-        Optional<RegistryKey<Biome>> biomeKey = world.getBiome(pos).getKey();
-        if (biomeKey.isEmpty()) {
-            return String.format("Biome-Details für '%s' konnten nicht gefunden werden.", biome);
-        }
-        Identifier identifier = biomeKey.get().getValue();
+        Identifier identifier = BuiltinRegistries.BIOME.getId(biome);
 
         float temperature = biome.getTemperature();
         float humidity = biome.getDownfall();
