@@ -2,82 +2,118 @@ package software.gunter.naturesniche.config;
 
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
-import software.gunter.naturesniche.utils.SuperMath;
 
 public class GrowthConditions {
+    private final float maxDelta;
     private float temperature;
     private float humidity;
     private boolean precipitation;
-    private String fx;
+    private String temperatureModifier;
+    private String humidityModifier;
+    private String precipitationModifier;
+    private String deltaModifier;
 
-    public GrowthConditions(float temperature, float humidity, boolean precipitation) {
-        this(temperature, humidity, precipitation, "x");
-    }
-
-    public GrowthConditions(float temperature, float humidity, boolean precipitation, String fx) {
+    public GrowthConditions(
+            float maxDelta,
+            float temperature,
+            float humidity,
+            boolean precipitation) {
+        this.maxDelta = maxDelta;
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitation = precipitation;
-        this.fx = fx;
     }
 
-    public float calculateGrowthModifier(float temperature, float humidity, boolean precipitation) {
-        float temperatureModifier = calculateTemperatureModifier(temperature); // min 0.0, max 1.0
-        float humidityModifier = calculateHumidityModifier(humidity); // min 0.0, max 1.0
+    public GrowthConditions(
+            float maxDelta,
+            float temperature,
+            float humidity,
+            boolean precipitation,
+            String temperatureModifier,
+            String humidityModifier,
+            String precipitationModifier,
+            String deltaModifier) {
+        this.maxDelta = maxDelta;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.precipitation = precipitation;
+        this.temperatureModifier = temperatureModifier;
+        this.humidityModifier = humidityModifier;
+        this.precipitationModifier = precipitationModifier;
+        this.deltaModifier = deltaModifier;
+    }
+
+    public float computeClimateDelta(float temperature, float humidity, boolean precipitation) {
+        float temperatureModifier = calculateTemperatureDifference(temperature); // min 0.0, max 1.0
+        float humidityModifier = calculateHumidityDifference(humidity); // min 0.0, max 1.0
         float precipitationModifier = calculatePrecipitationModifier(precipitation);
 
-        float maxModifier = 1.0f;
-        float combinedModifier = (temperatureModifier + humidityModifier + precipitationModifier) * (maxModifier / 3.0f);
+        Argument temperatureModiferArgument = new Argument("t", temperatureModifier);
+        Argument humidityModifierArgument = new Argument("h", humidityModifier);
+        Argument precipitationModifierArgument = new Argument("p", precipitationModifier);
+        Expression expression = new Expression(getDeltaModifier(), temperatureModiferArgument, humidityModifierArgument, precipitationModifierArgument);
 
-        Argument combinedModifierArgument = new Argument("x", combinedModifier);
-        Expression expression = new Expression(getFx(), combinedModifierArgument);
+        float delta = (float) expression.calculate();
 
-        float modifier = (float) expression.calculate();
-        modifier = Math.max(0.0f, Math.min(maxModifier, modifier));
-        return modifier * 2.0f;
+        return delta / maxDelta;
     }
 
-    private float calculateTemperatureModifier(float temperature) {
-        float maxModifier = 1.0f;
-        float difference = Math.abs(temperature - getTemperature());
-        float modifier = (float) SuperMath.calculateAsymptoticFunctionValue(difference, 0, maxModifier, 1.0);
-        modifier = Math.max(0.0f, Math.min(maxModifier, modifier));
-        return modifier;
+    private float calculateTemperatureDifference(float temperature) {
+        float difference = temperature - getTemperature();
+        return calculateDifference(difference, getTemperatureModifier());
     }
 
-    private float calculateHumidityModifier(float humidity) {
-        float maxModifier = 1.0f;
-        float difference = Math.abs(humidity - getHumidity());
-        float modifier = (float) SuperMath.calculateAsymptoticFunctionValue(difference, 0, maxModifier, 4.0);
-        modifier = Math.max(0.0f, Math.min(maxModifier, modifier));
-        return modifier;
+    private float calculateHumidityDifference(float humidity) {
+        float difference = humidity - getHumidity();
+        return calculateDifference(difference, getHumidityModifier());
+    }
+
+    private float calculateDifference(float difference, String modifier) {
+        Argument differenceArgument = new Argument("x", difference);
+        Expression expression = new Expression(modifier, differenceArgument);
+
+        return (float) expression.calculate();
     }
 
     private float calculatePrecipitationModifier(boolean precipitation) {
-        return this.precipitation == precipitation ? 1.0f : 0.5f;
+        float difference = this.precipitation == precipitation ? 0.0f : 1.0f;
+        return calculateDifference(difference, getPrecipitationModifier());
     }
 
     public void setTemperature(float temperature) { this.temperature = temperature; }
     public void setHumidity(float humidity) { this.humidity = humidity; }
     public void setPrecipitation(boolean precipitation) { this.precipitation = precipitation; }
-    public void setFx(String fx) {
-        this.fx = fx;
-    }
 
     // Getter-Methoden für die Felder
     public float getTemperature() { return temperature; }
     public float getHumidity() { return humidity; }
     public boolean isPrecipitation() { return precipitation; }
-    public String getFx() { return (fx != null && !fx.isEmpty() ? fx : "x"); }
 
-    // Optional: toString-Methode für die Ausgabe der Wachstumsbedingungen
+    public String getTemperatureModifier() {
+        return temperatureModifier != null && !temperatureModifier.isEmpty() ? temperatureModifier : "x";
+    }
+
+    public String getHumidityModifier() {
+        return humidityModifier != null && !humidityModifier.isEmpty() ? humidityModifier : "x";
+    }
+
+    public String getPrecipitationModifier() {
+        return precipitationModifier != null && !precipitationModifier.isEmpty() ? precipitationModifier : "x";
+    }
+
+    public String getDeltaModifier() { return (deltaModifier != null && !deltaModifier.isEmpty() ? deltaModifier : "t + h + p"); }
+
     @Override
     public String toString() {
         return "GrowthConditions{" +
-                "temperature=" + temperature +
+                "maxDelta=" + maxDelta +
+                ", temperature=" + temperature +
                 ", humidity=" + humidity +
                 ", precipitation=" + precipitation +
-                ", fx='" + fx + '\'' +
+                ", temperatureModifier='" + temperatureModifier + '\'' +
+                ", humidityModifier='" + humidityModifier + '\'' +
+                ", precipitationModifier='" + precipitationModifier + '\'' +
+                ", deltaModifier='" + deltaModifier + '\'' +
                 '}';
     }
 }
