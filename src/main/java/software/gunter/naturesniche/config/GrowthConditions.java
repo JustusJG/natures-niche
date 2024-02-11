@@ -4,7 +4,6 @@ import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
 public class GrowthConditions {
-    private final float maxDelta;
     private float temperature;
     private float humidity;
     private boolean precipitation;
@@ -14,18 +13,15 @@ public class GrowthConditions {
     private String deltaModifier;
 
     public GrowthConditions(
-            float maxDelta,
             float temperature,
             float humidity,
             boolean precipitation) {
-        this.maxDelta = maxDelta;
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitation = precipitation;
     }
 
     public GrowthConditions(
-            float maxDelta,
             float temperature,
             float humidity,
             boolean precipitation,
@@ -33,7 +29,6 @@ public class GrowthConditions {
             String humidityModifier,
             String precipitationModifier,
             String deltaModifier) {
-        this.maxDelta = maxDelta;
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitation = precipitation;
@@ -55,7 +50,7 @@ public class GrowthConditions {
 
         float delta = (float) expression.calculate();
 
-        return delta / maxDelta;
+        return delta;
     }
 
     private float calculateTemperatureDifference(float temperature) {
@@ -106,7 +101,6 @@ public class GrowthConditions {
     @Override
     public String toString() {
         return "GrowthConditions{" +
-                "maxDelta=" + maxDelta +
                 ", temperature=" + temperature +
                 ", humidity=" + humidity +
                 ", precipitation=" + precipitation +

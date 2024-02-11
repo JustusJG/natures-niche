@@ -18,9 +18,6 @@ import software.gunter.naturesniche.utils.NaturesNicheUtil;
 import java.util.*;
 
 public class NaturesNicheConfig {
-    private final GameRules.Key<DoubleRule> DEFAULT_DELTA_MAX =
-        GameRuleRegistry.register("nnDeltaMax", GameRules.Category.MISC, GameRuleFactory.createDoubleRule(4));
-
     private final GameRules.Key<DoubleRule> DEFAULT_TEMPERATURE =
             GameRuleRegistry.register("nnTemperature", GameRules.Category.MISC, GameRuleFactory.createDoubleRule(0.8));
     private final GameRules.Key<DoubleRule> DEFAULT_HUMIDITY =
@@ -34,11 +31,10 @@ public class NaturesNicheConfig {
         String plantIdentifier = Registry.BLOCK.getId(state.getBlock()).toString();
 
         GameRules gameRules = world.getGameRules();
-        float defaultDeltaMax = (float) gameRules.get(DEFAULT_DELTA_MAX).get();
         float defaultTemperature = (float) gameRules.get(DEFAULT_TEMPERATURE).get();
         float defaultHumidity = (float) gameRules.get(DEFAULT_HUMIDITY).get();
         boolean defaultPrecipitation = gameRules.get(DEFAULT_PRECIPITATION).get();
-        Plant defaultPlant = new Plant(new GrowthConditions(defaultDeltaMax, defaultTemperature, defaultHumidity, defaultPrecipitation));
+        Plant defaultPlant = new Plant(new GrowthConditions(defaultTemperature, defaultHumidity, defaultPrecipitation));
 
         RegistryEntry<Biome> biomeRegistryEntry = world.getBiome(pos);
         Optional<RegistryKey<Biome>> biomeRegistryKey = biomeRegistryEntry.getKey();
