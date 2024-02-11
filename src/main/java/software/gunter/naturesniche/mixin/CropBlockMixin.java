@@ -54,13 +54,13 @@ public abstract class CropBlockMixin extends Block implements Fertilizable {
     @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
     public void randomTickInject(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
         float multiplierValue = Math.abs(NaturesNicheMod.CONFIG.getModifier(state, world, pos));
-        float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, 0.511);
+        float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 1, -1, 0.511);
 
         if (world.getBaseLightLevel(pos, 0) >= 9) {
             int i = state.get(getAgeProperty());
             if (i < getMaxAge()) {
                 float f = getAvailableMoisture(this, world, pos);
-                f *= multiplier;
+                f *= Math.abs(multiplier);
                 int chance = random.nextInt((int) (growthThreshold / f) + 1);
                 if (chance == 0) {
                     world.setBlockState(pos, withAge(i + 1), 2); // grow

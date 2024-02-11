@@ -32,7 +32,7 @@ public abstract class CocoaBlockMixin extends HorizontalFacingBlock implements F
 
     @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
     public void randomTickInject(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
-        float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
+        float multiplier = Math.abs(NaturesNicheMod.CONFIG.getModifier(state, world, pos));
 
         int i;
         if (world.random.nextInt((int) (5 / multiplier)) == 0 && (i = state.get(AGE)) < 2) {
@@ -43,7 +43,7 @@ public abstract class CocoaBlockMixin extends HorizontalFacingBlock implements F
 
     @Inject(at = @At("HEAD"), method = "grow", cancellable = true)
     public void growInject(ServerWorld world, Random random, BlockPos pos, BlockState state, CallbackInfo ci) {
-        float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
+        float multiplier = Math.abs(NaturesNicheMod.CONFIG.getModifier(state, world, pos));
         if (multiplier < 1.0f) {
             if (random.nextFloat() >= multiplier) {
                 ci.cancel();

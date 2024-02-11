@@ -93,7 +93,7 @@ public abstract class StemBlockMixin extends Block implements Fertilizable {
             float multiplier = (float) SuperMath.calculateAsymptoticFunctionValue(multiplierValue, 2.5, -2.5, 0.511);
             if (world.getBaseLightLevel(pos, 0) >= 9) {
                 float f = getAvailableMoisture(this, world, pos);
-                f *= multiplier;
+                f *= Math.abs(multiplier);
                 int chance = random.nextInt((int) (growthThreshold / f) + 1);
                 if (chance == 0) {
                     int i = state.get(AGE);
@@ -118,7 +118,7 @@ public abstract class StemBlockMixin extends Block implements Fertilizable {
 
     @Inject(at = @At("HEAD"), method = "grow", cancellable = true)
     public void growInject(ServerWorld world, Random random, BlockPos pos, BlockState state, CallbackInfo ci) {
-        float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos);
+        float multiplier = Math.abs(NaturesNicheMod.CONFIG.getModifier(state, world, pos));
         int i = Math.min(7, state.get(AGE) + MathHelper.nextInt(world.random, (int) (2.0 * multiplier), (int) Math.ceil(5.0 * multiplier)));
         BlockState blockState = state.with(AGE, i);
         world.setBlockState(pos, blockState, Block.NOTIFY_LISTENERS);

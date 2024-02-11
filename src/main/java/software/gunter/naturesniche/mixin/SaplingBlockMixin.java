@@ -31,7 +31,7 @@ public abstract class SaplingBlockMixin extends Block implements Fertilizable {
     @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
     public void randomTickInject(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
         float multiplier = NaturesNicheMod.CONFIG.getModifier(state, world, pos) * 2;
-        if (world.getLightLevel(pos.up()) >= 9 && random.nextInt((int) (7 / multiplier)) == 0) {
+        if (world.getLightLevel(pos.up()) >= 9 && random.nextInt((int) (7 / Math.abs(multiplier))) == 0) {
             this.generate(world, pos, state, random);
         }
         ci.cancel();
@@ -40,7 +40,7 @@ public abstract class SaplingBlockMixin extends Block implements Fertilizable {
     @Inject(at = @At("HEAD"), method = "canGrow", cancellable = true)
     public void canGrowInject(World world, Random random, BlockPos pos, BlockState state, CallbackInfoReturnable<Boolean> cir) {
         float multiplier = NaturesNicheMod.CONFIG.getModifier(state, (ServerWorld) world, pos);
-        cir.setReturnValue((double)world.random.nextFloat() < 0.45 * multiplier);
+        cir.setReturnValue((double)world.random.nextFloat() < 0.45 * Math.abs(multiplier));
         cir.cancel();
     }
 }
