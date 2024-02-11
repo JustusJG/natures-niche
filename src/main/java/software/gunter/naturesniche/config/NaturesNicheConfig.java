@@ -49,6 +49,11 @@ public class NaturesNicheConfig {
             biome = biomeRegistryEntry.value();
         }
 
+        if (biome == null) {
+            Identifier identifier = Identifier.tryParse("minecraft:plains");
+            biome = BuiltinRegistries.BIOME.get(identifier);
+        }
+
         Identifier biomeId = BuiltinRegistries.BIOME.getId(biome);
         Plant plant = getPlants().getOrDefault(plantIdentifier, defaultPlant);
         assert biome != null;
