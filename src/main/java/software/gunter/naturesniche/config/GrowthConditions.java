@@ -48,9 +48,7 @@ public class GrowthConditions {
         Argument precipitationModifierArgument = new Argument("p", precipitationModifier);
         Expression expression = new Expression(getDeltaModifier(), temperatureModiferArgument, humidityModifierArgument, precipitationModifierArgument);
 
-        float delta = (float) expression.calculate();
-
-        return delta;
+        return (float) expression.calculate();
     }
 
     private float calculateTemperatureDifference(float temperature) {
