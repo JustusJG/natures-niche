@@ -70,7 +70,6 @@ public class ConfigManager {
                 String id = biomeObject.get("id").getAsString();
 
                 GrowthConditions conditions = new GrowthConditions(
-                        biomeObject.get("maxDelta").getAsFloat(),
                         biomeObject.get("temperature").getAsFloat(),
                         biomeObject.get("humidity").getAsFloat(),
                         biomeObject.get("precipitation").getAsBoolean()
